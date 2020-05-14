@@ -30,7 +30,7 @@ for(var i = 0; i < 3; i++){
     for(var i = 0; i < 3; i++){
         console.log(i)// 0 1 2
         // 内层声明的i会覆盖外层所声明的i，所以只会执行内部的三次循环
-    }
+    } 
 }
 ```
 ```javascript
