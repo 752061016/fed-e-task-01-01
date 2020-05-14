@@ -350,7 +350,7 @@ const obj = {
 
 console.log(obj) // {{0.44269706532540654: "123", bars: "123"}}
 ```
-### 对象拓展方法
+### 对象拓展方法 Object.assign()
 ##### 将多个源对象中的属性复制到一个目标对象中，并覆盖目标对象的值
 ```javascript
 const sourcel = {
@@ -379,6 +379,121 @@ const results = fn(obj)
 console.log(result) // {foo: 123, bar: 321, baz: 123}
 console.log(result === obj) // false
 ```
+### 对象拓展方法 Object.is()
+##### 比较两个对象是否相等 == ===
++ 双等号 == 进行比较时会将转换数据类型 存在 0 == false 为 true 的情况
++ 三等号 === 进行比较时不会转换数据类型，但对于数字0的正负是无法区分的，存在 +0 === -0 为true和 NaN === NaN 为false(NaN代表一个特别的值，所以该表达式应该为true)的情况
++ Object.is()能够区分+0和-0和NaN，且不会转换数据类型，一般来说该方法用的不多，还是建议使用三等号进行判断
+```javascript
+Object.is(+0, -0)   // false
+Object.is(NaN, NaN) // true
+```
+### Proxy 代理
+##### 在vue3版本以前使用Object.defineProperty进行数据的拦截与响应
+##### 在ES2015中新增Proxy专门为对象设置访问代理器，监听对象的读写
+```javascript
+const person = {
+    name: 'zxd',
+    age: 25
+}
+
+// @person {object} 代理的目标对象
+const personProxy = new Proxy(person, {
+    // @target {object} 代理的目标对象
+    // @property {string} 目标对象的属性名
+    get (target, property) {
+        console.log(target, property)
+        return property in target ? target[property] : 'default'
+    },
+    // @value {any} 给目标对象的属性所赋的值
+    set (target, property, value) {
+        console.log(target, property, value)
+        // 设置拦截器，设置的值必须为数字，否则报错
+        if (!Number.isInteger(value)) {
+            throw new TypeError(`${value} is not an int`)
+        }
+        target[property] = value
+        return value
+    }
+})
+
+personProxy.name   // {name: 'zxd', age: 25} 'name'   'zxd'
+personProxy.weight // 'default'
+personProxy.height = 175 // {name: 'zxd', age: 25} 'height' 175
+personProxy.height = 'zxd' // 报错
+```
+### Proxy vs Object.defineProperty()
++ Proxy功能更为强大，Object.defineProperty()只能监听数据的读写，Proxy能够监视对象更多的操作，如delete删除操作
++ Proxy能更好的支持数组对象的监视，以往是使用Object.defineProperty()来重写数组的操作方法，如push(),以此来实现对数组的监听
+```javascript
+const list = []
+
+const listProxy = new Proxy(list, {
+    set (target, property, value) {
+        console.log('set', property, value)
+        target[property] = value
+        return true
+    }
+})
+
+// 在添加数组元素时还会增加数组长度
+listProxy.push(100) // set 0 100   set length 1
+```
++ Proxy是以非侵入的方式监管了对象的读写，不需要再对对象本身进行操作，而Object.defineProperty()需要单独定义对象中需要被监听的属性，会增加许多操作
+### Reflect
++ 以java解释Reflect是一个静态类，无法使用<s>new Reflect()</s>来创建一个实例对象，只能调用静态类的静态方法
++ Reflect内部封装了一系列对对象的底层操作，与Proxy的处理对象的方法成员相对应，Reflect成员方法接受Proxy处理对象的默认实现
+```javascript
+const person = {
+    name: 'zxd',
+    age: 25
+}
+
+const proxy = new Proxy (person, {
+    //若该对象内未设置get()方法，则会为其默认添加为Reflect.get()方法
+    get (target, property) {
+        return Reflect.get(target, property)
+    },
+
+    // 正确使用Proxy的方法：在不影响原先对象的操作方法的前提下添加自定义方法
+    set (target, property, value) {
+        // 自定义的操作
+        console.log(target, property, value)
+
+        // 再调用原生的操作方法
+        return Reflect.set(target, property, value)
+    }
+})
+```
++ 统一提供一套用于操作对象的API：传统操作方法的不同写法也不同，容易乱
+```javascript
+const person = {
+    name: 'zxd',
+    age: 25
+}
+
+// 传统的操作方法
+console.log('name' in person)
+console.log(delete person['age'])
+console.log(Object.keys(person))
+
+// Reflect的操作方法，统一对象的操作方式
+console.log(Reflect.has(person, 'name'))
+console.log(Reflect.deleteProperty(person, 'age'))
+console.log(Reflect.ownKeys(person))
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
