@@ -441,7 +441,7 @@ listProxy.push(100) // set 0 100   set length 1
 ```
 + Proxy是以非侵入的方式监管了对象的读写，不需要再对对象本身进行操作，而Object.defineProperty()需要单独定义对象中需要被监听的属性，会增加许多操作
 ### Reflect
-+ 以java解释Reflect是一个静态类，无法使用<s>new Reflect()</s>来创建一个实例对象，只能调用静态类的静态方法
++ 以java的解释Reflect是一个静态类，无法使用<s>new Reflect()</s>来创建一个实例对象，只能调用静态类的静态方法
 + Reflect内部封装了一系列对对象的底层操作，与Proxy的处理对象的方法成员相对应，Reflect成员方法接受Proxy处理对象的默认实现
 ```javascript
 const person = {
@@ -482,9 +482,210 @@ console.log(Reflect.has(person, 'name'))
 console.log(Reflect.deleteProperty(person, 'age'))
 console.log(Reflect.ownKeys(person))
 ```
+### Promise
+##### 一种更优的异步编程解决方案：解决了传统异步编程中回调函数嵌套过深的问题
+##### 在模块二JavaScript异步编程中详细介绍
+### Class 类
+##### 在Class之前使用构造函数配合原型对象来创建实例对象
+##### 优点：更容易理解，结构更清晰
+```javascript
+class Person {
+    constructor (name) {
+        this.name = name
+    }
+    say () {
+        console.log(this.name)
+    }
+}
+const foo = new Person('tom')
+foo.say() // tom
+```
+##### 静态方法：ES2015中新增添加静态成员的static关键词，调用静态方法：类.方法名()
+```javascript
+class Person {
+    constructor (name) {
+        this.name = name
+    }
+    say () {
+        console.log(this.name)
+    }
+    static create (name) {
+        console.log(this) // Person
+        return new Person(name)
+    }
+}
+const foo = Person.create('tom')
+foo.say() // tom
+```
+##### ps：静态方法是挂载到类型上的，在静态方法内部的this是不会去指向某个实例对象，而是当前的类型，也就是当前Person类
+### 类的继承
+##### ES2015之前大多使用原型方法来实现继承，ES2015则使用extends来实现继承，更方便，更清晰
+```javascript
+class Person {
+    constructor (name) {
+        this.name = name
+    }
+    say () {
+        console.log(this.name)
+    }
+}
 
+// 子类 Student 继承父类 Person
+class Student extends Person {
+    constructor (name, number) {
+        // super()始终指向父类，调用super()就是调用父类的构造函数
+        super(name)
+        this.number = number
+    }
+    hello () {
+        super.say()
+        console.log(this.number)
+    }
+}
 
+const bar = new Student('jerry', '100')
+bar.hello() // jerry 100
+```
+### Set数据结构
+##### 集合：与传统的数组类似，但内部的成员不允许是重复的，每个成员都是唯一的
+```javascript
+const s = new Set()
 
+// 为集合添加元素，若当前元素已存在则忽略
+s.add(1).add(2).add(3).add(4)
+
+console.log(s) // Set(4) {1, 2, 3, 4}
+
+// 以下两个方法都可对集合进行遍历
+s.forEach(i => console.log(i))
+for (let i of s) {
+    console.log(i)
+}
+
+// 集合的长度
+s.size
+
+// 判断集合中是否含有该值
+s.has(100) // false 
+
+// 删除集合中某个值 成功返回true 若不存在则返回false
+s.delete(3) // true
+
+// 清空集合内的元素
+s.clear()
+```
+##### 应用场景：去重
+```javascript
+const arr = [1, 2, 6, 4, 8, 1, 2]
+
+// 集合可接受一个数组，并将其不重复的值保存在集合中,再使用Array.from()或数组展开符转换回数组
+const result = Array.from(new Set(arr))
+
+const result2 = [...new Set(arr)]
+```
+### Map数据结构
+##### 严格意义上的键值对集合，在对象中添加的键不为字符串，就会将这个键的toString()的结果作为键存储,而Map的键不会转换
+##### Map类型能用任何类型的键，对象只能用字符串或Symbol类型的键
+```javascript
+const map = new Map()
+
+const tom = { name: 'tom' }
+
+map.set(tom, 90)
+
+console.log(map) // Map(1) {{…} => 90}
+
+// 获取某个值
+map.get(tom) // 90
+
+// 判断某个值是否存在
+map.has(tom) // true
+
+// 删除某个值 成功true 不存在false
+map.delete(tom) // true
+
+// 遍历所有的值
+map.forEach((value, key) => {
+    console.log(value, key)
+})
+```
+### Symbol 一种全新的原始数据类型
++ 最主要的作用就是为对象添加独一无二的属性名
+##### 在不同的两个模块中修改相同对象同一个值，则该值会被覆盖，ES2015以后对象的属性名也可使用Symbol()
+##### 使用Symbol()创建的值永远是唯一的，不会重复
+##### Symbol()允许传入一个字符串作为描述文本，如：Symbol('foo')
+
+```javascript
+Symbol() === Symbol() // false 永远是唯一的
+Symbol('foo') === Symbol('foo') // false 永远是唯一的
+
+const obj = {
+    [Symbol()]: '123'
+}
+
+obj[Symbol()] = '456'
+obj[Symbol()] = '789'
+
+console.log(obj) // {Symbol(): "123", Symbol(): "456", Symbol(): "789"}
+```
+##### 应用场景：除了避免对象属性名重复，还能模拟对象的私有成员
+```javascript
+// a.js ===================
+const name = Symbol()
+const Person = {
+    [name]: 'zxd',
+    say () {
+        console.log(this[name])
+    }
+}
+
+// b.js ===================
+// 在其他模块无法访问到a.js中的name，也无法创建一个相同的Symbol，所以无法直接访问到该成员，只能调用对象中的普通成员
+Person.say() // 'zxd'
+```
+##### 可在全局使用Symbol.for()注册一个唯一的Symbol值
+```javascript
+const s1 = Symbol.for('foo')
+const s2 = Symbol.for('foo')
+console.log(s1 === s2) // true
+
+const s3 = Symbol.for(true)
+const s4 = Symbol.for('true')
+console.log(s3 === s4) // true
+```
+##### ps:Symbol.for()传入的参需要是字符串，若不是字符串也会被转换成字符串
+##### Symbol设置了很多内置的常量作为内部方法的标识,让自定义对象实现js内置的接口
+```javascript
+console.log(Symbol.iterator) // Symbol(Symbol.iterator)
+console.log(Symbol.hasInstance) // Symbol(Symbol.hasInstance)
+
+const obj = {}
+console.log(obj.toString()) // [object Object] 对象的toString标签 可以自定义toString标签
+
+// 直接添加字符串标识符可能会跟内部成员产生重复，所以要求使用Symbol来实现接口
+const objSymbol = {
+    // toStringTag: 内置的Symbol常量
+    [Symbol.toStringTag]: 'XObjcect'
+}
+console.log(objSymbol.toString()) // [object XObjcect]
+```
+##### 使用Symbol作为属性名，大部分方法是拿不到这个属性名的，Symbol属性特别适合作为对象的私有属性
+```javascript
+const obj = {
+    [Symbol()]: 'Symbol value',
+    foo: 'normal value'
+}
+
+for (var key in obj){
+    console.log(key) // foo 拿不到Symbol
+}
+
+console.log(Object.keys(obj)) // ["foo"] 拿不到Symbol
+
+console.log(JSON.stringify(obj)) // {"foo":"normal value"} 拿不到Symbol
+
+console.log(Object.getOwnPropertySymbols(obj)) // [Symbol()] 拿到对象中所有的Symbol属性名
+```
 
 
 
