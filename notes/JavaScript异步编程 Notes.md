@@ -13,13 +13,79 @@
 ## 同步模式 Synchronous
 ##### 代码当中的任务依次执行，后一个任务需要等待前一个任务执行结束才能开始执行，执行顺序跟代码的编写顺序是一致的，排队执行
 ##### 当代码开始执行时会将当前执行代码压入栈中，等待其运行结束后移出栈，以此类推，若某个代码执行时间过长，后面的代码就会延迟，这种延迟叫做阻塞，对于用户来说页面就会变得卡顿，所以需要异步模式解决耗时操作
+## 异步模式 Asynchronous
+##### 异步模式的API是不会等待这个任务的结果才开始下一个任务，开启过后立即执行下一个任务，后续逻辑一般会通过回调函数的方式定义，在耗时任务结束后立刻执行回调函数
+##### 没有异步模式，单线程的JavaScript是无法处理大量的耗时任务的
+##### 单线程下的异步模式最大的难点：异步模式的代码执行顺序混乱，多看多练多思考！
+##### 示例
+```javascript
+// JavaScript引擎会先执行调用栈的代码，再执行消息队列中的代码
+// 调用栈  当前执行的代码
+// 消息队列  还未处理的代码
+// Event loop  检查调用栈是否执行结束，执行消息队列的代码
+
+// 加入调用栈并立即执行
+console.log('global begin') // global begin
+
+// 开启time1的定时器API
+setTimeout(function () {
+    console.log('time1')
+}, 1800)
+
+// 开启time2的定时器API
+setTimeout(function () {
+    console.log('time2')
+
+    setTimeout(function () {
+        console.log('time3')
+    }, 1000)
+}, 1000)
+
+// 加入调用栈并立即执行
+console.log('global end') // global end
+
+// 1000ms后time2定时器结束，将回调函数添加到消息队列中
+// 当前调用栈代码执行结束，Event loop将消息队列中time2代码添加到调用栈中并执行
+// time2
+
+// time2中又存在定时器，再开启time3定时器
+
+// 又800ms后time1定时器结束，添加到消息队列中
+// 此时调用栈执行结束，Event loop将消息队列中time1代码添加到调用栈中并执行
+// time1
+
+// 又200ms后time3定时器结束
+// time3
+```
+```flow
+st=>start: 开始执行
+cond1=>condition: 同步任务？ Yes or No?
+op1=>operation: 压入栈
+op2=>operation: 执行栈代码
+op3=>operation: 添加到消息队列
+cond2=>condition: 消息队列中有未执行代码？ Yes or No?
+cond3=>condition: 栈执行完毕？ Yes or No?
+e=>end: 进入后台
+
+st->cond1
+op1->op2->cond2
+op3->cond3
+cond1(yes)->op1
+cond1(no)->op3
+cond2(yes)->op1
+cond2(no)->e
+cond3(yes)->cond2
+cond3(no)->op2
+```
 
 
 
 
 
 
-先创建了一个全局上下文，调用obj.func(40),创建了一个名为func的函数上下文，内部创建了num的变量，但此时用的是箭头函数，this指向了window，this.name=20+5=25，函数内部加的是内部由形参创建的num变量40+5=45，返回一个函数，因为上下文结束，把func函数上下文移出栈，再创建一个新的函数上下文，这个上下文是在全局上下文内的，相当于window.(obj.func(40))()，this指向window，this.name=window.name=25+4=29，最后一个num在函数内找不到，根据作用域链往函数定义位置往上找最近的num定义，是30，最后一个输出40
+
+
+
 
 
 
