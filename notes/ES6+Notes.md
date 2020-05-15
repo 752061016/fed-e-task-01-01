@@ -158,11 +158,11 @@ console.log(foo, baz, bar, ret, arg) // 100 200 300 undefined 500
 const path = '/foo/baz/bar'
 
 // 旧方法
-// const tmp = path.split('/)
+// const tmp = path.split('/')
 // const rootdir = temp[1]
 
 // 数组解构
-const [, rootdir] = path
+const [, rootdir] = path.split('/')
 console.log(rootdir) // foo
 ```
 ### 对象解构
@@ -229,12 +229,12 @@ const result = myTagFunc`hey, ${name} is a ${gender}`
 ### 字符串的扩展方法
 ##### includes() 判断字符串对象中是否包含该字符片段
 ##### startsWith() 判断字符串对象是否以该字符片段开头
-##### endWith() 判断字符串对象是否以该字符片段开头
+##### endsWith() 判断字符串对象是否以该字符片段开头
 ``` javascript
 const msg = 'Error: foo is not defined.'
 msg.includes('foo')     // true
 msg.startsWith('Error') // true
-msg.endWith('.')        // true
+msg.endsWith('.')       // true
 ```
 ### 参数默认值
 旧方法：在函数体中判断参数是否为undefined来决定是否为其设置默认值
@@ -252,7 +252,7 @@ function fn (arg, enable = false) {
 
 fn(true) // fasle
 ```
-ps:带有参数默认值的参数必须在参数的最后，否则默认值无法正常工作
+ps:因为参数是按照次序传递的，带有参数默认值的参数应该在参数列表的最后，否则默认值无法正常工作
 ### 剩余参数
 ##### 使用...的形式将函数体中剩余的参数以数组的形式添加到该参数中
 ``` javascript
@@ -296,21 +296,21 @@ arr.filter(i => i % 2)
 ##### 箭头函数并不会改变this的指向
 ```javascript
 const person = {
-    name: 'tom',
+    names: 'tom',
     sayHi1: function(){
-        console.log(this.name)
+        console.log(this.names)
     },
     sayHi2: () => {
-        console.log(this.name)
+        console.log(this.names)
     },
     sayHiAsync1: function(){
         setTimeout(function () {
-            console.log(this.name)
+            console.log(this.names)
         },1000)
     },
     sayHiAsync2: function(){
         setTimeout(() => {
-            console.log(this.name)
+            console.log(this.names)
         },1000)
     }
 }
@@ -686,23 +686,283 @@ console.log(JSON.stringify(obj)) // {"foo":"normal value"} 拿不到Symbol
 
 console.log(Object.getOwnPropertySymbols(obj)) // [Symbol()] 拿到对象中所有的Symbol属性名
 ```
+### for...of 循环
+##### for循环适合遍历数组，for...in适合遍历键值对，还有各种函数式的遍历方法如forEach()等,都存在一定的局限性
+##### 推出for...of循环作为遍历所有数据结构的统一方式，包括伪数组arguments、元素节点的列表、Set、Map(Map返回的是[键,值])
+```javascript
+const arr = [100, 200, 300, 400]
+for (const item of arr) {
+    // for...of循环出来的是当前元素本身，并不是下标
+    console.log(item) // 100 200 300 400
 
+    // 同样可以使用break退出该循环
+    if (item > 300){
+        break
+    }
+}
 
+const set = new Set([100, 200])
+for (const item of set) {
+    console.log(item) // 100 200 
+}
 
+const map = new Map()
+map.set('foo', '123')
+map.set('baz', '321')
+for (const item of map) {
+    console.log(item) // ['foo', '123'] ['baz', '321']
+}
+```
+##### ps：arr.some()循环中能通过返回true，arr.every()返回false来终止循环，但forEach()无法终止
+##### for...of无法循环遍历普通对象数据类型，ES中能够表示有结构的数据类型越来越多，为了提供统一的遍历方式，提出了iterable接口，iterable接口是for...of的前提
++ 所有能被for...of实现的数据类型内部都能实现iterable接口(内部必须挂载iterable方法)
++ iterable方法返回一个next方法，通过不断调用next方法可以实现对数据类型的遍历
+```javascript
+const arr = ['foo', 'bar', 'baz']
 
+const iterator = arr[Symbol.iterator]()
 
+console.log(iterator.next()) // {value: "foo", done: false}
+console.log(iterator.next()) // {value: "bar", done: false}
+console.log(iterator.next()) // {value: "baz", done: false}
+console.log(iterator.next()) // {value: undefined, done: true}
+```
+### 实现可迭代接口
+```javascript
+// 可迭代接口 iterable 需要有返回迭代器的方法
+const obj = { 
+    store: ['foo', 'baz', 'bar'],
 
+    [Symbol.iterator]: function(){
+        // 迭代器接口 iterator 需要有迭代的next()方法
+        let index = 0
+        const self = this
 
+        return {
+            next: function() {
+                // 迭代结果接口 iterationResult
+                const result = {
+                    // 当前迭代的位置
+                    value: self.store[index],
+                    // 是否迭代结束
+                    done: index >= self.store.length
+                }
+                index ++
+                return result
+            }
+        }
+    }
+}
 
+for (const item of obj) {
+    console.log(item) // 'foo' 'baz' 'bar'
+}
+```
+### 迭代器模式
+##### 对外提供统一遍历接口，让外部不需要关心内部的数据结构
+```javascript
+// a.js =============
+const todos = {
+    lefe: ['吃饭', '睡觉', '打豆豆'],
+    learn: ['语', '数', '英'],
+    work: ['喝茶'],
 
+    // 为外部提供统一的遍历接口
+    each: function (callback){
+        const all = [...this.lefe, ...this.learn, ...this.work]
+        for (const item of all) {
+            callback(item)
+        }
+    },
 
+    [Symbol.iterator]: function () {
+        const all = [...this.lefe, ...this.learn, ...this.work]
+        let index = 0
+        
+        return {
+            next: function () {
+                return {
+                    value: all[index],
+                    done: index++ >= all.length
+                }
+            }
+        }
+    }
+}
 
+// b.js ================
+// 不再关心内部的数据结构是否发生了变化
+todos.each(function (item) {
+    console.log(item) // 吃饭 睡觉 打豆豆...
+})
 
+for (const item of todos) {
+    console.log(item) // 吃饭 睡觉 打豆豆...
+}
+```
+### 生成器函数
+##### 减少在复杂的异步代码中回调嵌套过深的问题，进而提供更好的异步编程解决方案
++ 在普通函数名前加 * 会变成生成器函数
++ 生成器函数调用并不会马上执行，而是返回一个新的对象，内部包含next()函数，在调用对象的next()方法是才会执行函数
++ next()方法执行后会返回一个对象，解构与迭代器的next()返回值相同，value中包含函数中的返回值
+```javascript
+function * foo () {
+    console.log('zxd')
+    return 100
+}
 
+const result = foo()
+console.log(result) // foo {<suspended>} 包含next()方法
+console.log(result.next()) // 'zxd' {value: 100, done: true}
+```
++ 生成器函数会配合yield作为返回值，yield可多次使用，生成器函数会返回一个生成器对象，调用next()函数体才会开始执行，遇到yield函数体会暂停，yield的返回值会作为next()的返回值，再次调用则会从上次暂停的位置继续执行，直到函数体结束
+```javascript
+function * foo () {
+    console.log('1')
+    yield 1
+    console.log('2')
+    yield 2
+    console.log('3')
+    yield 3
+}
 
+const result = foo()
+console.log(result.next()) // '1' {value: 1, done: false}
+console.log(result.next()) // '2' {value: 2, done: false}
+console.log(result.next()) // '3' {value: 3, done: false}
+console.log(result.next()) // {value: undefined, done: true}
+```
+### 生成器应用
+##### 发号器
+```javascript
+function * createIdMaker () {
+    let id = 1
+    // 死循环保证代码能被一直调用
+    while (true) {
+        yield id++
+    }
+}
 
+const idMaker = createIdMaker()
 
+console.log(idMaker.next().value) // 1
+console.log(idMaker.next().value) // 2
+console.log(idMaker.next().value) // 3
+```
+##### 以生成器编码迭代器更为方便
+```javascript
+const todos = {
+    lefe: ['吃饭', '睡觉', '打豆豆'],
+    learn: ['语', '数', '英'],
+    work: ['喝茶'],
 
+    [Symbol.iterator]: function * () {
+        const all = [...this.lefe, ...this.learn, ...this.work]
+        for (const item of all) {
+            yield item
+        }
+    }
+}
 
+for (const item of todos) {
+    console.log(item) // 吃饭 睡觉 打豆豆...
+}
+```
+### ES Modules
+##### 语言层面的模块化标准，在模块化开发中课程详细介绍
+### ES2016
+##### ES2016相比ES2015只是一个小版本，新增了两个功能：
++ 新增数组函数 includes(),查找数组中是否存在某个值，还能在数组中查找NaN
+```javascript
+const arr = ['foo', 123, NaN]
 
+console.log(arr.includes('foo')) // true
+console.log(arr.includes(123))   // true
+console.log(arr.includes(NaN))   // true
+```
++ 新增指数运算符,方便密集型数学运算有帮助
+```javascript
+// 旧方法：使用Math.pow计算
+console.log(Math.pow(2,10)) // 1024
+
+// ES2016新增方法
+console.log(2 ** 10) // 1024
+```
+### ES2017 2017.6
+##### ES2017相比ES2015也是一个小版本，新增以下功能：
++ 新增Object.values()方法，与Object.keys()类型，Object.keys()返回对象所有键组成的数组，Object.values()返回对象中所有的值组成的数组
+```javascript
+const obj = {
+    foo: 123,
+    bar: 456,
+    baz: 789
+}
+
+console.log(Object.keys(obj))   // ["foo", "bar", "baz"]
+console.log(Object.values(obj)) // [123, 456, 789]
+```
++ 新增Object.entries()以数组的形式返回键值对,将对象转换后可再使用for...of进行处理，也方便了将对象转换成Map类型
+```javascript
+const obj = {
+    foo: 123,
+    bar: 456,
+    baz: 789
+}
+
+console.log(Object.entries(obj)) // [["foo", 123], ["bar", 456], ["baz", 789]]
+
+for (const [key, value] of Object.entries(obj)) {
+    console.log(key, value) // foo 123 bar 456 baz 789
+}
+
+console.log(new Map(Object.entries(obj))) // Map(3) {"foo" => 123, "bar" => 456, "baz" => 789}
+```
++ 新增Object.getOwnPropertyDescriptors(),获取属性中对象的完整描述信息
+```javascript
+const p1 = {
+    bar: 'bar',
+    baz: 'baz',
+    get add () {
+        return this.bar + ' ' + this.baz
+    }
+}
+
+console.log(p1.add) // bar baz
+
+const p2 = Object.assign({}, p1)
+p2.bar = 'foo'
+console.log(p2.add) // bar baz 字符串不变，是因为在复制时把add只当做普通的属性进行复制
+
+// 获取属性中对象的完整描述信息
+const descriptors = Object.getOwnPropertyDescriptors(p1)
+// 创建一个新对象并添加属性的描述信息
+const p3 = Object.defineProperties({}, descriptors)
+p3.bar = 'foo'
+console.log(p3.add) // foo baz
+```
++ 新增两个字符串填充方法：String.prototype.padStart / String.prototype.padEnd，用给定的字符串去填充目标字符串的开始或结束为止，保证数据的可读性
+```javascript
+const codes = {
+    html: 6,
+    css: 80,
+    javascript: 200
+}
+
+for (const [name, value] of Object.entries(codes)) {
+    // name 用-字符串填充结尾  value 用0字符串填充开头 因为value是数字所以需要先转换
+    console.log(`${name.padEnd(12,'-')}|${value.toString().padStart(5,'0')}`)
+    // html--------|00006
+    // css---------|00080
+    // javascript--|00200
+}
+```
++ 允许在函数的参数位置的最后一位添加尾逗号，方便调整数据的位置及增删数据
+```javascript
+const arr = {
+    100,
+    200,
+    300,
+}
+```
++ Async / Await 解决异步编程中函数嵌套过深的问题，本质上是使用Promise的语法糖，重点在异步编程模块中详细介绍
 
