@@ -52,10 +52,10 @@ console.log('global end') // global end
 
 // 又800ms后time1定时器结束，添加到消息队列中
 // 此时调用栈执行结束，Event loop将消息队列中time1代码添加到调用栈中并执行
-// time1
+// time1 
 
 // 又200ms后time3定时器结束
-// time3
+// time3 
 ```
 ```flow
 st=>start: 开始执行
