@@ -41,7 +41,7 @@ setTimeout(function () {
     }, 1000)
 }, 1000)
 
-// 加入调用栈并立即执行
+// 加入调用栈并立即执行 
 console.log('global end') // global end
 
 // 1000ms后time2定时器结束，将回调函数添加到消息队列中
