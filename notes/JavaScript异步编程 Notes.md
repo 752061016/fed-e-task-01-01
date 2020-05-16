@@ -344,7 +344,7 @@ function co (fn) {
 
     handleResult(g.next())
 }
-
+ 
 co(main)
 ```
 ## Async / Await 语法糖
