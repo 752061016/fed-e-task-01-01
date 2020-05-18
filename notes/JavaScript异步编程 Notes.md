@@ -274,7 +274,7 @@ console.log('global end')
 
 + 微任务的出现是为了提高整体的响应能力
   + Promise的回调会作为微任务执行，所以出现上述Promise比setTimeout先打印的情况
-  + 目前绝大多数异步调用都是作为宏任务执行，而Promise、MutationObserver和node中的process.nextTick都会作为微任务在本轮调用的末尾就执行
+  + 目前绝大多数异步调用都是作为宏任务执行，而Promise的回调、MutationObserver和node中的process.nextTick都会作为微任务在本轮调用的末尾就执行
 ### Generator 异步方案
 + 虽然Promise使用链式使所有任务串联执行的方式解决了函数嵌套的问题，但存在大量的回调函数，虽然相互间没有嵌套，但代码不像传统同步代码一样有很高的可读性
 + ES2015提供了Generator(生成器)，在执行生成器函数时并不会马上执行，而是返回一个对象
