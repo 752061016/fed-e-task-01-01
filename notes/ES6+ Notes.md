@@ -440,6 +440,8 @@ const listProxy = new Proxy(list, {
 listProxy.push(100) // set 0 100   set length 1
 ```
 + Proxy是以非侵入的方式监管了对象的读写，不需要再对对象本身进行操作，而Object.defineProperty()需要单独定义对象中需要被监听的属性，会增加许多操作
+##### 更多操作方法：
+![Pandao editor.md](../image/Proxy.png "Pandao editor.md")
 ### Reflect
 + 以java的解释Reflect是一个静态类，无法使用<s>new Reflect()</s>来创建一个实例对象，只能调用静态类的静态方法
 + Reflect内部封装了一系列对对象的底层操作，与Proxy的处理对象的方法成员相对应，Reflect成员方法接受Proxy处理对象的默认实现
@@ -598,7 +600,7 @@ console.log(map) // Map(1) {{…} => 90}
 // 获取某个值
 map.get(tom) // 90
 
-// 判断某个值是否存在
+// 判断某个键是否存在
 map.has(tom) // true
 
 // 删除某个值 成功true 不存在false
@@ -804,7 +806,7 @@ for (const item of todos) {
 ##### 减少在复杂的异步代码中回调嵌套过深的问题，进而提供更好的异步编程解决方案
 + 在普通函数名前加 * 会变成生成器函数
 + 生成器函数调用并不会马上执行，而是返回一个新的对象，内部包含next()函数，在调用对象的next()方法是才会执行函数
-+ next()方法执行后会返回一个对象，解构与迭代器的next()返回值相同，value中包含函数中的返回值
++ next()方法执行后会返回一个对象，结构与迭代器的next()返回值相同，value中包含函数中的返回值
 ```javascript
 function * foo () {
     console.log('zxd')
@@ -890,7 +892,7 @@ console.log(2 ** 10) // 1024
 ```
 ### ES2017 2017.6
 ##### ES2017相比ES2015也是一个小版本，新增以下功能：
-+ 新增Object.values()方法，与Object.keys()类型，Object.keys()返回对象所有键组成的数组，Object.values()返回对象中所有的值组成的数组
++ 新增Object.values()方法，与Object.keys()类似，Object.keys()返回对象所有键组成的数组，Object.values()返回对象中所有的值组成的数组
 ```javascript
 const obj = {
     foo: 123,
@@ -956,7 +958,7 @@ for (const [name, value] of Object.entries(codes)) {
     // javascript--|00200
 }
 ```
-+ 允许在函数的参数位置的最后一位添加尾逗号，方便调整数据的位置及增删数据
++ 允许在对象或数组的最后一位添加尾逗号，方便调整数据的位置及增删数据
 ```javascript
 const arr = {
     100,
