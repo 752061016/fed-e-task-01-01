@@ -162,7 +162,7 @@ function del2 (a): void {
 }
 ```
 ### 原始类型
-+ JavaScript中的原始数据类型：string number array boolean null void symbol
++ JavaScript中的原始数据类型：string number boolean null void symbol
 ```javascript
 // @flow
 
@@ -195,7 +195,7 @@ const obj1: { foo: string, bar: number } = {foo: 'foo', bar: 1}
 // 定义对象内不确定是否有无的元素，在定义的元素名后加?，则这个对象没有这个参数也不会报错
 const obj2: { foo?: string, bar: number } = {bar: 1}
 
-// 对象可以通过字面量方式添加元素，可以定义所以的元素类型，但没有数量要求
+// 对象可以通过字面量方式添加元素，可以定义成员的元素类型，但没有数量要求
 // 定义了对象的键名及值都为string类型
 const obj3: { [string]: string } = {}
 obj3.key1 = 'string'
@@ -319,7 +319,7 @@ const e: null = null
 const f: undefined = undefined
 const g: symbol = Symbol() // 因为Symbol是ES2015新增的内置类型，如果转换成es5版本则找不到Symbol的定义，所以定义Symbol必须将版本调到es2015及以上，或者配置lib中指明ES2015类型库，还必须加上DOM，因为两者并不是放在同个类型库中
 ```
-### 中文错误学习
+### 中文错误信息
 ##### Typescript中还能抛出中文的错误消息，控制台输出：tsc --locale zh-CN
 ##### 中文编码提醒 vscode设置搜索typescript locale 选择语言zh-CN
 ### 作用域问题
@@ -371,7 +371,7 @@ sun(1, 2, 3, '4') // 报错
 ```javascript
 const tuple: [number, string] = [1, '1'] // 类型顺序不对或元素数量不对都会报错
 
-// 也能使用数组的形式访问
+// 也能使用数组解构的形式访问
 const [age, name] = tuple
 ```
 ### 枚举类型
@@ -534,7 +534,7 @@ cache.age = 25
 ##### 描述一类具体对象的抽象成员
 + ES6以前通过函数+原型模拟实现类，ES6开始JavaScript有了专门的class
 + Typescript增强了class的相关语法
-  + Typescript中参数的类型必须要初始化或赋值，否则会报错
+  + Typescript中参数的类型必须要初始化或类型注解，否则会报错
   + 也能使用函数注解
 ```Typescript
 class Perpon {
@@ -555,7 +555,7 @@ class Perpon {
 + public：公有成员，都能使用，默认所有成员都是公有成员，建议加上
 + private：私有成员，只能内部使用，如果constructor方法被定义成私有成员，则不能在外部使用new方法创建，但是能用static方法添加
 + protected: 保护成员，只能子类使用
-+ static：静态方法，只能用类名.方法名调用，且this执行这个类
++ static：静态方法，只能用类名.方法名调用，且方法内部的this指向这个类
 + readonly: 只读属性，无法被修改，若是已有访问修饰符则readonly要跟在修饰符后面
 ```Typescript
 class Person {
@@ -606,24 +606,24 @@ interface Run {
 
 class Person implements Eat, Run {
     eat (food: string): void {
-        console.log(string)
+        console.log(food)
     }
     run (distance: number): void {
-        console.log(string)
+        console.log(distance)
     }
 }
 class Animal implements Eat, Run {
     eat (food: string): void {
-        console.log(string)
+        console.log(food)
     }
     run (distance: number): void {
-        console.log(string)
+        console.log(distance)
     }
 }
 ```
 ### 抽象类
 ##### 泛指各类中都拥有的成员部分
-+ 使用abstract将类定义为抽象类，定义在class、前
++ 使用abstract将类定义为抽象类，定义在class前
 + 该类无法被new创建，只能被子类继承
 + 抽象类内部也能使用abstract定义抽象方法，该方法必须在子类中有定义，否则会报错
 ```Typescript
@@ -639,6 +639,10 @@ class Dog extends Animal {
         console.log(`狗,${distance}`)
     }
 }
+
+const dog = new Dog()
+dog.run(100)   // 狗，100
+dog.cat('123') // 123
 ```
 ### 泛型 Generics
 ##### 在函数声明时不指定类型，在函数调用时再指定类型，目的：极大程度的复用代码
