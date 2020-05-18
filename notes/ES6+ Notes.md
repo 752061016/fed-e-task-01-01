@@ -270,7 +270,7 @@ const arr = ['foo', 'bar', 'baz']
 
 console.log.apply(console,arr) // 依次打印arr中的成员
 
-console.log(...arr) // 遍历arr成员，并将每个成员作为参数调用函数
+console.log(...arr) // 展开数组，把每个元素作为一个参数加入到函数中
 ```
 ### 箭头函数
 ##### 简化了函数的定义方式，允许使用=>箭头的形式来定义函数，作用：
