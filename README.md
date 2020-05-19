@@ -26,6 +26,13 @@ console.log(Math.min(...arr)) // 4
 因为fn的调用者是obj，所以fn内部的this指向为obj，fn内部调用setTimeout(),但因为使用的是箭头函数，this的指向不会发生改变，所以还是this还是指向obj，打印obj.a，输出20
 ![Pandao editor.md](./image/06.jpg "Pandao editor.md")
 ## 第6题
+### 扩展对象，解决属性名冲突问题
+```javascript
+const obj = {}
+obj[Symbol()] = 123
+obj[Symbol()] = 321
+console.log(obj) //{Symbol(): 123, Symbol(): 321}
+```
 ### 由于Symbol类型创建的值永远是唯一的，不会重复，所以使用Symbol类型作为常量,不用担心常量重复
 ```javascript
 const type = {
@@ -57,7 +64,7 @@ const obj = {
     }
 }
 // b.js
-obj.getType() // 只能拿到值而无法修改值
+obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接访问成员
 ```
 ![Pandao editor.md](./image/07.jpg "Pandao editor.md")
 ## 第7题
@@ -73,6 +80,7 @@ obj.getType() // 只能拿到值而无法修改值
 ### 微任务：回调在执行栈执行结束后马上执行的代码称之为微任务，如Promise的回调、MutationObserver和node中的process.nextTick
 ![Pandao editor.md](./image/09.jpg "Pandao editor.md")
 ## 第9题
+### 第一种 直接使用Promise成功回调返回新的Promise对象 优点：代码量少 缺点：代码不够扁平化
 ```javascript
 function time (a){ // 返回一个Promise对象，在定时器结束后返回成功
     return new Promise(function (resolve,reject) {
@@ -90,6 +98,42 @@ time('hello ') // 10ms后执行回调并把hello作为参数传入回调
     }).then(function(res){
         console.log(res) // hello lagou IOU
     })
+```
+### 第二种 使用Generator封装  优点：代码结构更加扁平化，更易于理解 缺点：代码量多，若参数不同需要重新写生成器函数
+```javascript
+// 生成器函数，调用时返回对象，每次调用对象中的next执行，遇到yield暂停
+function * generator() { 
+  yield 'hello '
+  yield 'lagou '
+  yield 'IOU'
+}
+
+function main(fn) {
+  const g = fn() // 生成生成器对象
+  let txt = '' // 保存字符串
+
+  function handle(data) {
+    if (data.done) { // data.done为true时表示生成器函数执行完毕 输出txt字符串
+      console.log(txt) // hello lagou IOU
+    }else{
+      // 生成器函数未执行结束，在定时器结束后将字符串作为参数返回，递归调用生成器
+      // 生成一个新的Promise，10ms后调用成功回调,并将字符串作为参数传给回调函数
+      new Promise((resolve,reject) => {
+        setTimeout(() => {
+          resolve(data.value) // 10ms后调用成功回调并传入字符串片段
+        },10)
+      }).then( res => {// 成功回调接收字符串参数，拼接字符串，递归函数并再次执行生成器函数
+        txt += res
+        handle(g.next())
+      }, error => {
+        console.log(error)
+      })
+    }
+  }
+  handle(g.next())
+}
+
+main(generator)
 ```
 ![Pandao editor.md](./image/10.jpg "Pandao editor.md")
 ## 第10题

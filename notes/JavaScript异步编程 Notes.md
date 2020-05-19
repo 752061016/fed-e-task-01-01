@@ -279,7 +279,7 @@ console.log('global end')
 + 虽然Promise使用链式使所有任务串联执行的方式解决了函数嵌套的问题，但存在大量的回调函数，虽然相互间没有嵌套，但代码不像传统同步代码一样有很高的可读性
 + ES2015提供了Generator(生成器)，在执行生成器函数时并不会马上执行，而是返回一个对象
   + 调用对象中的next方法才会执行代码体，遇到yield返回，再次调用从上次的结束位置继续，以此类推，若是传入参数则会被作为yield的返回值
-  + 调用对象中的throw方法则会捕获代码中的异常，在发生异常时进行处理
+  + 调用对象中的throw方法在代码中抛出异常以便捕获
 ```javascript
 function * foo () {
     console.log('start')
@@ -315,37 +315,43 @@ console.log(result3.value) // foo
 + 继续执行生成器函数，再次遇见yield返回成功带foo参数的Promise对象，继续递归
 + 继续执行生成器函数，遇见yield返回失败带err参数的Promise对象，代码结束，捕获异常
 ```javascript
+// Generator 配合 Promise 的异步方案
 function * main () {
-    try{
-        const result = yield Promise.resolve('foo')
+  try{
+      const result = yield Promise.resolve('foo') // 成功回调
 
-        const result2 = yield Promise.resolve('bar')
+      const result2 = yield Promise.resolve('bar') // 成功回调
 
-        const result3 = yield Promise.reject('error')
-    }catch (e) {
-        console.error(e)
-    }
+      const result3 = yield Promise.reject('error') // 失败回调
+
+      const result4 = yield Promise.resolve('error') // 因为异常捕获所以被强制停止了
+  }catch (e) {
+      // 捕获失败时的异常
+      console.error(e)
+  }
 }
 
 function co (fn) {
-    const g = fn()
-    
-    function handleResult (result) {
-        if (result.done) return // 生成器执行结束
+  const g = fn()
+  
+  function handleResult (result) {
+      if (result.done) return // 生成器执行结束
 
-        result.value
-            .then(data => {
-                console.log(data)
-                handleResult(g.next(data))
-            }, errpr =>{
-                g.throw(new Error('error'))
-            })
-    }
+      result.value
+          // 注册成功回调，递归调用函数
+          .then(data => {
+              console.log(data)
+              handleResult(g.next(data))
+          }, error =>{
+              // 给生成器抛出异常，由生成器中的try...catch捕获
+              g.throw(new Error(error))
+          })
+  }
 
-    handleResult(g.next())
+  handleResult(g.next())
 }
- 
-co(main)
+
+co(main) // foo bar Error
 ```
 ## Async / Await 语法糖
 ##### 语言层面的异步编程标准

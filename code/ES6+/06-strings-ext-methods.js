@@ -3,7 +3,7 @@
 const message = 'Error: foo is not defined.'
 
 console.log(
-  message.startsWith('Error') // true
-  message.endsWith('.')       // true
-  message.includes('foo')     // true
+  message.startsWith('Error'), // true
+  message.endsWith('.'),       // true
+  message.includes('foo'),     // true
 )

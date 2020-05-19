@@ -7,10 +7,11 @@ const tuple: [number, string] = [18, 'zce']
 // const age = tuple[0]
 // const name = tuple[1]
 
-const [age, name] = tuple
+// 数组解构
+const [age, name] = tuple // 18 zce
 
-// ---------------------
 
+// 从函数多次返回相同类型的值
 const entries: [string, number][] = Object.entries({
   foo: 123,
   bar: 456

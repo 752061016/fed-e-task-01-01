@@ -1,18 +1,18 @@
 // 原始数据类型
 
-const a: string = 'foobar'
+const a: string = 'string'
 
 const b: number = 100 // NaN Infinity
 
-const c: boolean = true // false
+const c: boolean = true // false 
 
 // 在非严格模式（strictNullChecks）下，
-// string, number, boolean 都可以为空
+// string, number, boolean 都可以为空,严格模式不行
 // const d: string = null
 // const d: number = null
 // const d: boolean = null
 
-const e: void = undefined
+const e: void = undefined // 严格模式下只能是undefined，非严格模式可以为null
 
 const f: null = null
 

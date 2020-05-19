@@ -8,7 +8,7 @@ const arr1: Array<number> = [1, 2, 3]
 
 const arr2: number[] = [1, 2, 3]
 
-// 案例 -----------------------
+// 示例
 
 // 如果是 JS，需要判断是不是每个成员都是数字
 // 使用 TS，类型有保障，不用添加类型判断
@@ -17,3 +17,4 @@ function sum (...args: number[]) {
 }
 
 sum(1, 2, 3) // => 6
+sun(1, 2, 3, '4') // error

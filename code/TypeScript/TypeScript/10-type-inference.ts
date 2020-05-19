@@ -4,9 +4,9 @@ export {} // 确保跟其它示例没有成员冲突
 
 let age = 18 // number
 
-// age = 'string'
+// age = 'string' // error
 
-let foo
+let foo // any
 
 foo = 100
 
