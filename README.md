@@ -28,14 +28,14 @@ console.log(Math.min(...arr)) // 4
 
 ![Pandao editor.md](./image/06.jpg "Pandao editor.md")
 ## 第6题
-### 扩展对象，解决属性名冲突问题
+#### 扩展对象，解决属性名冲突问题
 ```javascript
 const obj = {}
 obj[Symbol()] = 123
 obj[Symbol()] = 321
 console.log(obj) //{Symbol(): 123, Symbol(): 321}
 ```
-### 由于Symbol类型创建的值永远是唯一的，不会重复，所以使用Symbol类型作为常量,不用担心常量重复
+#### 由于Symbol类型创建的值永远是唯一的，不会重复，所以使用Symbol类型作为常量,不用担心常量重复
 ```javascript
 const type = {
     foo: Symbol('foo'),
@@ -55,7 +55,7 @@ if (obj.start === type.foo){
     console.log('baz')  // baz
 }
 ```
-### 还能模拟对象的私有成员，在模块内定义一个变量为Symbol类型，用变量作为对象的属性名，导出这个对象无法在其他模块被修改，例如：
+#### 还能模拟对象的私有成员，在模块内定义一个变量为Symbol类型，用变量作为对象的属性名，导出这个对象无法在其他模块被修改，例如：
 ```javascript
 // a.js
 const type = Symbol() // 定义在a文件的Symbol值外界无法拿到
@@ -70,19 +70,19 @@ obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接�
 ```
 ![Pandao editor.md](./image/07.jpg "Pandao editor.md")
 ## 第7题
-### 浅拷贝：复制目标对象的内存地址作为新对象的内存地址，因为新对象和目标对象的内存地址相同，所以当一个对象内的属性值发生改变时，另一个对象内的属性也会相对应的改变
-### 深拷贝：复制目标对象在内存中的数据保存在内存的新地址中，并将新的内存地址返回，当对象的值改变时，另一个数据不变
+#### 浅拷贝：复制目标对象的内存地址作为新对象的内存地址，因为新对象和目标对象的内存地址相同，所以当一个对象内的属性值发生改变时，另一个对象内的属性也会相对应的改变
+#### 深拷贝：复制目标对象在内存中的数据保存在内存的新地址中，并将新的内存地址返回，当对象的值改变时，另一个数据不变
 ![Pandao editor.md](./image/08.jpg "Pandao editor.md")
 ## 第8题
-### 异步编程：因为JavaScript是单线程的，所以所有的代码是排队按顺序运行的，只有等上一步结束才能继续，而异步编程则是在上一步代码开启后马上进入下一步执行，在上步代码结束后再执行对应的回调，在耗时很大的任务时采用异步编程只要开启就能进行下一个任务，无需等待执行结果，避免阻塞
-### Event loop：
+#### 异步编程：因为JavaScript是单线程的，所以所有的代码是排队按顺序运行的，只有等上一步结束才能继续，而异步编程则是在上一步代码开启后马上进入下一步执行，在上步代码结束后再执行对应的回调，在耗时很大的任务时采用异步编程只要开启就能进行下一个任务，无需等待执行结果，避免阻塞
+#### Event loop：
   1. 将同步任务放入执行栈执行，异步代码在API注册回调，当触发回调时将回调添加到任务队列中
   2. 在每次执行栈代码全部运行结束后去查看任务队列中是否还有未执行的代码，如果有，出队添加到执行栈并执行代码
-### 宏任务：回调队列中的任务称之为宏任务，如setTimeout setInterval
-### 微任务：回调在执行栈执行结束后马上执行的代码称之为微任务，如Promise的回调、MutationObserver和node中的process.nextTick
+#### 宏任务：回调队列中的任务称之为宏任务，如setTimeout setInterval
+#### 微任务：回调在执行栈执行结束后马上执行的代码称之为微任务，如Promise的回调、MutationObserver和node中的process.nextTick
 ![Pandao editor.md](./image/09.jpg "Pandao editor.md")
 ## 第9题
-### 第一种 直接使用Promise成功回调返回新的Promise对象，代码量少 缺点：代码不够扁平化
+#### 第一种 只用Promise成功回调返回新的Promise对象，代码量少 缺点：代码不够扁平化
 ```javascript
 function time (a){ // 返回一个Promise对象，在定时器结束后返回成功
     return new Promise(function (resolve,reject) {
@@ -101,7 +101,7 @@ time('hello ') // 10ms后执行回调并把hello作为参数传入回调
         console.log(res) // hello lagou IOU
     })
 ```
-### 第二种 使用Generator封装，代码结构更加扁平化，更易于理解
+#### 第二种 使用Generator封装，代码结构更加扁平化，更易于理解
 ```javascript
 // 生成器函数，调用时返回对象，每次调用对象中的next执行，遇到yield暂停
 function * generator() { 
@@ -139,8 +139,8 @@ main(generator)// hello lagou IOU
 ```
 ![Pandao editor.md](./image/10.jpg "Pandao editor.md")
 ## 第10题
-### TypeScript是JavaScript的超集，在JavaScript的基础上增加了更强大的类型系统和对es6+的支持，但Typescript无法在环境运行，最后还是会再编译成JavaScript语言，换句话说JavaScript是Typescript的基础，Typescript是JavaScript的扩展和实现
+#### TypeScript是JavaScript的超集，在JavaScript的基础上增加了更强大的类型系统和对es6+的支持，但Typescript无法在环境运行，最后还是会再编译成JavaScript语言，换句话说JavaScript是Typescript的基础，Typescript是JavaScript的扩展和实现
 ![Pandao editor.md](./image/11.jpg "Pandao editor.md")
 ## 第11题
-### 优点：Typescript功能比JavaScript更加强大，类型系统能在编译阶段就发现运行可能会出现的问题，提高效率；而且能直接使用新特性，编译后能编译成各种版本的ECMAScript，兼容性更加强大
-### 缺点：多了许多JavaScript所不具备的概念，增加了学习成本，初期创建项目时会多出许多成本
+#### 优点：Typescript功能比JavaScript更加强大，类型系统能在编译阶段就发现运行可能会出现的问题，提高效率；而且能直接使用新特性，编译后能编译成各种版本的ECMAScript，兼容性更加强大
+#### 缺点：多了许多JavaScript所不具备的概念，增加了学习成本，初期创建项目时会多出许多成本
