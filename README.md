@@ -24,6 +24,8 @@ console.log(Math.min(...arr)) // 4
 ## 第5题
 ### 20
 因为fn的调用者是obj，所以fn内部的this指向为obj，fn内部调用setTimeout(),但因为使用的是箭头函数，this的指向不会发生改变，所以还是this还是指向obj，打印obj.a，输出20
+
+
 ![Pandao editor.md](./image/06.jpg "Pandao editor.md")
 ## 第6题
 ### 扩展对象，解决属性名冲突问题
@@ -80,7 +82,7 @@ obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接�
 ### 微任务：回调在执行栈执行结束后马上执行的代码称之为微任务，如Promise的回调、MutationObserver和node中的process.nextTick
 ![Pandao editor.md](./image/09.jpg "Pandao editor.md")
 ## 第9题
-### 第一种 直接使用Promise成功回调返回新的Promise对象 优点：代码量少 缺点：代码不够扁平化
+### 第一种 直接使用Promise成功回调返回新的Promise对象，代码量少 缺点：代码不够扁平化
 ```javascript
 function time (a){ // 返回一个Promise对象，在定时器结束后返回成功
     return new Promise(function (resolve,reject) {
@@ -99,7 +101,7 @@ time('hello ') // 10ms后执行回调并把hello作为参数传入回调
         console.log(res) // hello lagou IOU
     })
 ```
-### 第二种 使用Generator封装  优点：代码结构更加扁平化，更易于理解 缺点：代码量多，若参数不同需要重新写生成器函数
+### 第二种 使用Generator封装，代码结构更加扁平化，更易于理解
 ```javascript
 // 生成器函数，调用时返回对象，每次调用对象中的next执行，遇到yield暂停
 function * generator() { 
@@ -133,12 +135,12 @@ function main(fn) {
   handle(g.next())
 }
 
-main(generator)
+main(generator)// hello lagou IOU
 ```
 ![Pandao editor.md](./image/10.jpg "Pandao editor.md")
 ## 第10题
 ### TypeScript是JavaScript的超集，在JavaScript的基础上增加了更强大的类型系统和对es6+的支持，但Typescript无法在环境运行，最后还是会再编译成JavaScript语言，换句话说JavaScript是Typescript的基础，Typescript是JavaScript的扩展和实现
 ![Pandao editor.md](./image/11.jpg "Pandao editor.md")
 ## 第11题
-### 优点：Typescript功能比JavaScript更加强大，类型系统能在编译阶段就发现运行可能会出现的问题，提高效率；编译后能编译成各种版本的ECMAScript，兼容性更加强大，而且能直接使用新特性
+### 优点：Typescript功能比JavaScript更加强大，类型系统能在编译阶段就发现运行可能会出现的问题，提高效率；而且能直接使用新特性，编译后能编译成各种版本的ECMAScript，兼容性更加强大
 ### 缺点：多了许多JavaScript所不具备的概念，增加了学习成本，初期创建项目时会多出许多成本
