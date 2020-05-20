@@ -72,7 +72,7 @@ const obj = {
     [type]: 'type',
     getType(){
         return this[type]
-    }
+    } 
 }
 // b.js
 obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接访问成员
