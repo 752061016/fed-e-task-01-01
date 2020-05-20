@@ -1,32 +1,32 @@
 # 简答题
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/01.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/01.jpg "Pandao editor.md")
 ## 第1题
 ### 10
 在a\[6]()运行前for循环就执行完毕了，但因为在for中i定义的是全局变量，所以所有的方法都是打印同一个变量i，在循环结束后变为10，所以不管数组内哪个元素打印的都是10
 
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/02.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/02.jpg "Pandao editor.md")
 ## 第2题
 ### 报错 未初始化
 if的{}内算块级作用域，因为在内部使用let块级作用域定义了tmp，所以外部的tmp访问不到，块级作用域不会变量提升，所以在访问时还未定义
 
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/03.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/03.jpg "Pandao editor.md")
 ## 第3题
 ```javascript
 var arr = [12, 34, 32, 89, 4]
 console.log(Math.min(...arr)) // 4
 ```
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/04.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/04.jpg "Pandao editor.md")
 ## 第4题
 ##### var 全局作用域，块内部定义的变量能被外部访问；会变量提升，可以在声明前访问，得到的是undefined；定义的值和类型都可以被修改
 ##### let 块级作用域，块内部定义的变量不能被外部访问；不会变量提升，先声明后访问；定义的值和类型都可以被修改，
 ##### const 块级作用域，块内部定义的变量不能被外部访问；不会变量提升，先声明后访问；不允许声明过后又重新指向一个新的内存地址，但能修改属性成员
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/05.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/05.jpg "Pandao editor.md")
 ## 第5题
 ### 20
 因为fn的调用者是obj，所以fn内部的this指向为obj，fn内部调用setTimeout(),但因为使用的是箭头函数，this的指向不会发生改变，所以还是this还是指向obj，打印obj.a，输出20
 
 
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/06.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/06.jpg "Pandao editor.md")
 ## 第6题
 #### 扩展对象，解决属性名冲突问题
 ```javascript
@@ -68,11 +68,11 @@ const obj = {
 // b.js
 obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接访问成员
 ```
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/07.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/07.jpg "Pandao editor.md")
 ## 第7题
 #### 浅拷贝：复制目标对象的内存地址作为新对象的内存地址，因为新对象和目标对象的内存地址相同，所以当一个对象内的属性值发生改变时，另一个对象内的属性也会相对应的改变
 #### 深拷贝：复制目标对象在内存中的数据保存在内存的新地址中，并将新的内存地址返回，当对象的值改变时，另一个数据不变
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/08.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/08.jpg "Pandao editor.md")
 ## 第8题
 #### 异步编程：因为JavaScript是单线程的，所以所有的代码是排队按顺序运行的，只有等上一步结束才能继续，而异步编程则是在上一步代码开启后马上进入下一步执行，在上步代码结束后再执行对应的回调，在耗时很大的任务时采用异步编程只要开启就能进行下一个任务，无需等待执行结果，避免阻塞
 #### Event loop：
@@ -80,7 +80,7 @@ obj.getType() // 由于无法创建出一样的 Symbol 值，所以无法直接�
   2. 在每次执行栈代码全部运行结束后去查看任务队列中是否还有未执行的代码，如果有，出队添加到执行栈并执行代码
 #### 宏任务：回调队列中的任务称之为宏任务，如setTimeout setInterval
 #### 微任务：回调在执行栈执行结束后马上执行的代码称之为微任务，如Promise的回调、MutationObserver和node中的process.nextTick
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/09.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/09.jpg "Pandao editor.md")
 ## 第9题
 #### 第一种 只用Promise成功回调返回新的Promise对象，代码量少 缺点：代码不够扁平化
 ```javascript
@@ -137,10 +137,10 @@ function main(fn) {
 
 main(generator)// hello lagou IOU
 ```
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/10.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/10.jpg "Pandao editor.md")
 ## 第10题
 #### TypeScript是JavaScript的超集，在JavaScript的基础上增加了更强大的类型系统和对es6+的支持，但Typescript无法在环境运行，最后还是会再编译成JavaScript语言，换句话说JavaScript是Typescript的基础，Typescript是JavaScript的扩展和实现
-![Pandao editor.md](https://vr.mzgf.com/vr-java/public/js/test/image/11.jpg "Pandao editor.md")
+![Pandao editor.md](https://github.com/752061016/fed-e-task-01-01/tree/master/image/11.jpg "Pandao editor.md")
 ## 第11题
 #### 优点：Typescript功能比JavaScript更加强大，类型系统能在编译阶段就发现运行可能会出现的问题，提高效率；而且能直接使用新特性，编译后能编译成各种版本的ECMAScript，兼容性更加强大
 #### 缺点：多了许多JavaScript所不具备的概念，增加了学习成本，初期创建项目时会多出许多成本
